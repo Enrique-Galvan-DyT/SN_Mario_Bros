@@ -1,3 +1,4 @@
+isDown = false;
 // Función para clonar el objeto original al objeto temporal
 function cloneObject(source) {
     return JSON.parse(JSON.stringify(source));

@@ -6,7 +6,8 @@ let character = {
     Side: '',
     Lives: 0,
     PwrUP: 0,
-    TchnGround: false
+    isBigger: false,
+    isTchnGround: false
 }
 let temp_character = {
     element: undefined,
@@ -16,7 +17,8 @@ let temp_character = {
     Side: undefined,
     Lives: undefined,
     PwrUP: undefined,
-    TchnGround: false
+    isBigger: false,
+    isTchnGround: false
 }
 document.addEventListener('keydown', function(event) {
     const arrowKeys = ['ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown'];
@@ -32,6 +34,12 @@ document.addEventListener('keydown', function(event) {
             set_animation_jump_off()
             temp_character.Action = 'standing'
         }, 400);
+    }else if (event.key == arrowKeys[3]) {
+        if(temp_character.isBigger){
+            temp_character.Action = 'crouching';
+        }else{
+            set_animation_jump_off()
+        }
     }
 });
 function set_default_character_params(PositionX, PositionY, Action, Side, Lives, PwrUP) {
@@ -53,7 +61,9 @@ function set_animation_jump_on() {
 }
 
 function set_animation_jump_off() {
-    let numb = temp_character.element.style.bottom.split('%')[0]
-    temp_character.element.style.transition = '.2s ease bottom';  
-    temp_character.element.style.bottom = String(numb - 10 + "%") 
+    if(!isDown){//fixing this l8tr
+        let numb = temp_character.element.style.bottom.split('%')[0]
+        temp_character.element.style.transition = '.2s ease bottom';  
+        temp_character.element.style.bottom = String(numb - 10 + "%") 
+    }
 }
