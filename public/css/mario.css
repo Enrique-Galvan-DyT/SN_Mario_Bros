@@ -1,0 +1,16 @@
+
+.mario{
+    background-image: url('./../media/mario_bros_/smb_mario_sheet.png');
+}
+.standing-left{
+    background-position: 46% 0%;
+}
+.standing-right{
+    background-position: 54% 0%;
+}
+.jumping-left{
+    background-position: 7.4% 0%;
+}
+.jumping-right{
+    background-position: 92.4% 0%;
+}
