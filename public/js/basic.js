@@ -1,4 +1,5 @@
-set_default_character_params(0,0, 'standing','left',1,0,true)
+const game_content = document.querySelector(".game-content");
+//set_default_character_params(0,0, 'standing','left',1,0,true)
 
 const gameEntities = document.querySelectorAll('.game-entity');
 
@@ -35,7 +36,7 @@ function declare_new_stats_to_character() {
 }
 
 // Utilizamos setInterval para llamar a la función cada 1000 milisegundos (1 segundo)
-setInterval(checkStats, 100);
+//setInterval(checkStats, 100);
 
 function checkIfInside(entity) {
     let characterRect = character.element.getBoundingClientRect();

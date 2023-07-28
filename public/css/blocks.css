@@ -2,4 +2,36 @@
     background-image: url('./../media/scenary_/smb1_misc_sprites.gif');
     background-repeat: no-repeat;
     background-position: 56.2% 10%;
+    background-color: #d66a38;
 }
+.game-block-sky{
+    background-image: url('./../media/scenary_/smb1_misc_sprites.gif');
+    background-repeat: no-repeat;
+    background-position: 42.5% 27%;
+    background-size: 55rem;
+}
+.game-block-sky-cloud-top-middle{
+    background-image: url(./../media/scenary_/smb1_misc_sprites.gif);
+    background-repeat: no-repeat;
+    background-position: 25.6% 16%;
+    background-size: 87rem;
+    background-color: #5c94fc;
+}
+    .game-block-sky-cloud-bottom-start{
+        background-image: url(./../media/scenary_/smb1_misc_sprites.gif);
+        width: 1rem;
+        border-left: 1rem solid #5c94fc;
+        background-repeat: no-repeat;
+        background-position: 24.3% 17.3%;
+        background-color: #5c94fc;
+        background-size: 87rem;
+    }
+    .game-block-sky-cloud-bottom-middle{
+        background-image: url(./../media/scenary_/smb1_misc_sprites.gif);
+        height: 1.4rem;
+        background-repeat: no-repeat;
+        background-position: 25.6% 17.3%;
+        background-color: #5c94fc;
+        background-size: 87rem;
+        border-bottom: .65rem solid #5c94fc;
+    }
