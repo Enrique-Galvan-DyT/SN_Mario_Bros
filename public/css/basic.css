@@ -3,12 +3,24 @@
     padding: 0;
 }
 
-.game-character{
-    width: 2rem;
-    height: 2rem;
-    background-size: 49rem;
-    background-repeat: no-repeat;
+.game-content{
     position: absolute;
     bottom: 0;
     left: 0;
+}
+
+.game-character, .game-entity,.game-line{
+    width: 2rem;
+    height: 2rem;
+    background-size: 49rem;
+}
+.game-line{
+    width: auto;
+    display: flex;
+    position: unset;
+    list-style: none;
+}
+.game-entity{
+    background-size: 80rem;
+    position: inherit;
 }
