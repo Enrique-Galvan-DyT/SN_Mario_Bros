@@ -1,4 +1,6 @@
 const game_content = document.querySelector(".game-content");
+const game_content_rows = game_content.querySelector(".game-rows");
+const game_content_characters = game_content.querySelector(".game-characters");
 //set_default_character_params(0,0, 'standing','left',1,0,true)
 
 const gameEntities = document.querySelectorAll('.game-entity');
@@ -52,7 +54,6 @@ function checkIfInside(entity) {
         console.log(`El elemento game-character está dentro de las dimensiones de ${entity.id}.`);
     } 
 }
-
 
 function verify_character_axis() {
     gameEntities.forEach(entity => checkIfInside(entity));

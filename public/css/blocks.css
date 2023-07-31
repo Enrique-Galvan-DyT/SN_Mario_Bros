@@ -113,7 +113,7 @@
 .game-block-solid{
     background-image: url('./../media/scenary_/smb1_misc_sprites.gif');
     background-repeat: no-repeat;
-    background-position: 56.15% 11.48%;
+    background-position: 56.18% 11.48%;
     background-color: #c84c0c;
     background-size: 84rem;
 }
@@ -219,4 +219,58 @@
     background-size: 90rem;
     height: 1.25rem;
     border-top: .75rem solid #5c94fc;
+}.game-block-flag{
+    background-image: url('./../media/scenary_/smb1_misc_sprites.gif');
+    background-repeat: no-repeat;
+    background-position: 65.08% 6.77%;
+    background-size: 80rem;
+    background-color: #5c94fc;
+}
+
+.game-block-castle-door{
+    background-image: url('./../media/scenary_/smb1_misc_sprites.gif');
+    background-repeat: no-repeat;
+    background-position: 45.7% 22.02%;
+    background-size: 90rem;
+}.game-block-castle-door-arc{
+    background-image: url('./../media/scenary_/smb1_misc_sprites.gif');
+    background-repeat: no-repeat;
+    background-position: 45.76% 21.5%;
+    background-size: 84rem;
+}.game-block-castle-wall-brick{
+    background-image: url('./../media/scenary_/smb1_misc_sprites.gif');
+    background-repeat: no-repeat;
+    background-position: 43.38% 22.8%;
+    background-size: 84rem;
+}.game-block-castle-door-wall-vertical{
+    background-image: url('./../media/scenary_/smb1_misc_sprites.gif');
+    background-repeat: no-repeat;
+    background-position: 48.17% 22.8%;
+    background-size: 84rem;
+}.game-block-castle-middle-sides{
+    background-image: url('./../media/scenary_/smb1_misc_sprites.gif');
+    background-repeat: no-repeat;
+    background-position: 45.76% 20.2%;
+    background-size: 84rem;
+}.game-block-castle-middle{
+    background-image: url('./../media/scenary_/smb1_misc_sprites.gif');
+    background-repeat: no-repeat;
+    background-position: 45.76% 20.2%;
+    background-size: 84rem;
+}.game-block-castle-sides{
+    background-image: url('./../media/scenary_/smb1_misc_sprites.gif');
+    background-repeat: no-repeat;
+    background-position: 50.6% 20.2%;
+    background-size: 84rem;
+    background-color: #5c94fc;
+}.game-block-castle-window-left{
+    background-image: url('./../media/scenary_/smb1_misc_sprites.gif');
+    background-repeat: no-repeat;
+    background-position: 43.38% 18.9%;
+    background-size: 84rem;
+}.game-block-castle-window-right{
+    background-image: url('./../media/scenary_/smb1_misc_sprites.gif');
+    background-repeat: no-repeat;
+    background-position: 48.18% 18.9%;
+    background-size: 84rem;
 }
