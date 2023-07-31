@@ -250,9 +250,7 @@ function generate_level_one() {
               }, 170); // Cambia de clase cada 1 segundo (1000 milisegundos)
         });
     }    
-    set_character("mario")
-    console.log(question_blocks_animated.length)
-
+    set_character('mario')
 }
 
 function question_block_changeClass(element) {

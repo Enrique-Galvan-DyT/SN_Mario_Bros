@@ -3,7 +3,8 @@ let moveInterval;
 let isKeyPressed = false;
 
 let character = {
-    element: document.querySelector('.game-character'),
+    Element: '',
+    Character_name: '',
     PositionX: 0,
     PositionY: 0,
     Action: '',
@@ -15,7 +16,8 @@ let character = {
     isTchnGround: false
 }
 let temp_character = {
-    element: undefined,
+    Element: undefined,
+    Character_name: undefined,
     PositionX: undefined,
     PositionY: undefined,
     Action: undefined,
@@ -75,41 +77,45 @@ document.addEventListener('keyup', function(event) {
     }else if (event.key == arrowKeys[3]) {
     }
 });
-function set_default_character_params(PositionX, PositionY, Action, Side, Lives, PwrUP, isTchnGround) {
+function set_default_character_params(Character_name, PositionX, PositionY, Action, Side, Lives, PwrUP, isBigger, isRunning, isTchnGround) {
+    character.Element = document.querySelector('.game-player'),
+    character.Character_name = Character_name
     character.PositionX = PositionX
     character.PositionY = PositionY
     character.Action = Action
     character.Side = Side
     character.Lives = Lives
     character.PwrUP = PwrUP
+    character.isBigger = isBigger
+    character.isRunning = isRunning
     character.isTchnGround = isTchnGround
     temp_character = cloneObject(character)
-    temp_character.element = character.element
+    temp_character.Element = character.Element
 }
 function set_animation_jump_on() {
-    temp_character.element.style.transition = '.2s ease bottom';  
+    temp_character.Element.style.transition = '.2s ease bottom';  
     if ((temp_character.Action == 'standing' || temp_character.Action == 'running-start' || temp_character.Action == 'running-end')) {
         temp_character.Action = 'jumping'
         set_character_blocks_above(5);
     }
 }
 function set_animation_jump_off() {
-    temp_character.element.style.transition = '.2s ease bottom';  
+    temp_character.Element.style.transition = '.2s ease bottom';  
     if(temp_character.Action == 'jumping'){//fixing this l8tr
         temp_character.Action = 'standing'
         set_character_blocks_under(5)
     }
 }
 function set_character_blocks_above(blocks) {
-    temp_character.element.style.bottom = String(temp_character.PositionY + "rem")
-    let numb = parseInt(temp_character.element.style.bottom.split('rem')[0]) + (blocks * 2)
-    temp_character.element.style.bottom = String(numb + "rem") 
+    temp_character.Element.style.bottom = String(temp_character.PositionY + "rem")
+    let numb = parseInt(temp_character.Element.style.bottom.split('rem')[0]) + (blocks * 2)
+    temp_character.Element.style.bottom = String(numb + "rem") 
     temp_character.PositionY = numb
 }
 function set_character_blocks_under(blocks) {
-    temp_character.element.style.bottom = String(temp_character.PositionY + "rem")
-    let numb = parseInt(temp_character.element.style.bottom.split('rem')[0]) - (blocks * 2)
-    temp_character.element.style.bottom = String(numb + "rem") 
+    temp_character.Element.style.bottom = String(temp_character.PositionY + "rem")
+    let numb = parseInt(temp_character.Element.style.bottom.split('rem')[0]) - (blocks * 2)
+    temp_character.Element.style.bottom = String(numb + "rem") 
     temp_character.PositionY = numb
 }
 
@@ -125,7 +131,7 @@ function moveRight() {
     
     // Obtener la posición actual del div
     let currentPosition = parseFloat(character.element.style.left) || 0;
-    temp_character.element.style.transition = '.2s ease left';  
+    temp_character.Element.style.transition = '.2s ease left';  
     // Mover el div un píxel a la derecha
     if(temp_character.isRunning){
         currentPosition = currentPosition + (1*16);
@@ -147,7 +153,7 @@ function moveLeft() {
     
     // Obtener la posición actual del div
     let currentPosition = parseFloat(character.element.style.left) || 0;
-    temp_character.element.style.transition = '.2s ease left';  
+    temp_character.Element.style.transition = '.2s ease left';  
     // Mover el div un píxel a la derecha
     if(temp_character.isRunning){
         currentPosition = currentPosition - (1*16);
@@ -157,5 +163,30 @@ function moveLeft() {
     if (currentPosition >= 0) {
         // Establecer la nueva posición del div
         character.element.style.left = currentPosition + 'px';
+    }
+}
+
+
+function set_character(game_character_name){
+    set_character_boxes(game_content_characters, game_character_name)
+    set_default_character_params(game_character_name, 0, 4, 'standing','left', 1, 0, false, false, true)
+}
+function set_character_boxes(base_element, game_character_name) {
+    let player = document.createElement('div')
+    base_element.appendChild(player);
+    player.classList.add('game-player')
+    for (let i = 0; i < 3; i++) {
+        let character_row = document.createElement('ul')
+            player.appendChild(character_row);
+            character_row.classList.add('game-line')
+            for (let j = 0; j < 3; j++) {
+            let character_element = document.createElement('li');
+            character_row.appendChild(character_element);
+            if (i == 1 && j == 1) {
+                character_element.classList.add("game-character_hurtbox", "game-character", game_character_name, "standing-right")
+            }else{
+                character_element.classList.add("game-character-hitbox")
+            }
+        }
     }
 }

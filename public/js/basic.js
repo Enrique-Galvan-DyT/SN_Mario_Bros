@@ -1,7 +1,6 @@
 const game_content = document.querySelector(".game-content");
 const game_content_rows = game_content.querySelector(".game-rows");
 const game_content_characters = game_content.querySelector(".game-characters");
-//set_default_character_params(0,0, 'standing','left',1,0,true)
 
 const gameEntities = document.querySelectorAll('.game-entity');
 
@@ -16,32 +15,32 @@ function checkStats() {
     if (JSON.stringify(character) !== JSON.stringify(temp_character)) {
         declare_new_stats_to_character()
         character = cloneObject(temp_character);
-        character.element = temp_character.element;
-        console.log(String("Elemento: " + character.element + "\nPosición horizontal: " + character.PositionX + "\nPosición vertical: " + character.PositionY + "\nAcción: " + character.Action + "\nLado: " + character.Side + "\nLives: " + character.Lives + "\nPower UP: " + character.PwrUP + "\nEs grande? " + character.isBigger + "\nToca suelo? " + character.isTchnGround));
+        character.Element = temp_character.Element;
+        console.log(String("Elemento: " + character.Element + "\nPosición horizontal: " + character.PositionX + "\nPosición vertical: " + character.PositionY + "\nAcción: " + character.Action + "\nLado: " + character.Side + "\nLives: " + character.Lives + "\nPower UP: " + character.PwrUP + "\nEs grande? " + character.isBigger + "\nEstá corriendo? " + character.isRunning + "\nToca suelo? " + character.isTchnGround));
     }
 }
 
 function declare_new_stats_to_character() {
-    if (character.element.classList.contains(String('standing-' + character.Side))) {
-        character.element.classList.remove(String(character.Action + '-' + character.Side));
-        character.element.classList.add(String(temp_character.Action + '-' + temp_character.Side));
-    }else if(character.element.classList.contains(String('jumping-' + character.Side))){
-        character.element.classList.remove(String(character.Action + '-' + character.Side));
-        character.element.classList.add(String(temp_character.Action + '-' + temp_character.Side));
-    }else if(character.element.classList.contains(String('running-start-' + character.Side))){
-        character.element.classList.remove(String(character.Action + '-' + character.Side));
-        character.element.classList.add(String(temp_character.Action + '-' + temp_character.Side));
-    }else if(character.element.classList.contains(String('running-end-' + character.Side))){
-        character.element.classList.remove(String(character.Action + '-' + character.Side));
-        character.element.classList.add(String(temp_character.Action + '-' + temp_character.Side));
+    if (character.Element.classList.contains(String('standing-' + character.Side))) {
+        character.Element.classList.remove(String(character.Action + '-' + character.Side));
+        character.Element.classList.add(String(temp_character.Action + '-' + temp_character.Side));
+    }else if(character.Element.classList.contains(String('jumping-' + character.Side))){
+        character.Element.classList.remove(String(character.Action + '-' + character.Side));
+        character.Element.classList.add(String(temp_character.Action + '-' + temp_character.Side));
+    }else if(character.Element.classList.contains(String('running-start-' + character.Side))){
+        character.Element.classList.remove(String(character.Action + '-' + character.Side));
+        character.Element.classList.add(String(temp_character.Action + '-' + temp_character.Side));
+    }else if(character.Element.classList.contains(String('running-end-' + character.Side))){
+        character.Element.classList.remove(String(character.Action + '-' + character.Side));
+        character.Element.classList.add(String(temp_character.Action + '-' + temp_character.Side));
     }
 }
 
 // Utilizamos setInterval para llamar a la función cada 1000 milisegundos (1 segundo)
-//setInterval(checkStats, 100);
+setInterval(checkStats, 100);
 
 function checkIfInside(entity) {
-    let characterRect = character.element.getBoundingClientRect();
+    let characterRect = character.Element.getBoundingClientRect();
     let entityRect = entity.getBoundingClientRect();
 
     let isInside = characterRect.left >= entityRect.left &&

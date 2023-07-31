@@ -2,25 +2,31 @@
     margin: 0;
     padding: 0;
 }
+ul{ 
+    list-style: none;
+}
 
-.game-content{
+.game-content,.game-player{
     position: absolute;
     bottom: 0;
     left: 0;
 }
 
-.game-character, .game-entity,.game-line{
+.game-character, .game-entity,.game-line,.game-character-hitbox{
     width: 2rem;
     height: 2rem;
     background-size: 49rem;
-}
-.game-line{
+}.game-line{
     width: auto;
     display: flex;
     position: unset;
     list-style: none;
-}
-.game-entity{
+}.game-entity{
     background-size: 80rem;
     position: inherit;
+}.game-character-hitbox{
+    background-size: unset;
+}.game-player{
+    width: max-content;
+    height: max-content;
 }
