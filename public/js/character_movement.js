@@ -2,6 +2,8 @@ const arrowKeys = ['ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown'];
 let moveInterval;
 let isKeyPressed = false;
 
+let characters = {}
+
 let character = {
     Element: '',
     Character_name: '',
@@ -77,20 +79,25 @@ document.addEventListener('keyup', function(event) {
     }else if (event.key == arrowKeys[3]) {
     }
 });
-function set_default_character_params(Character_name, PositionX, PositionY, Action, Side, Lives, PwrUP, isBigger, isRunning, isTchnGround) {
-    character.Element = document.querySelector('.game-player'),
-    character.Character_name = Character_name
-    character.PositionX = PositionX
-    character.PositionY = PositionY
-    character.Action = Action
-    character.Side = Side
-    character.Lives = Lives
-    character.PwrUP = PwrUP
-    character.isBigger = isBigger
-    character.isRunning = isRunning
-    character.isTchnGround = isTchnGround
-    temp_character = cloneObject(character)
-    temp_character.Element = character.Element
+function set_default_character_params(Id_Element, Character_name, DivElement, PositionX, PositionY, Action, Side, Lives, PwrUP, isBigger, isRunning, isTchnGround) {
+    let name = String(Character_name + '-' + Id_Element)
+    characters[name]={
+        IdElement: Id_Element,
+        DivElement: DivElement,
+        Character_name: Character_name,
+        PositionX: PositionX,
+        PositionY: PositionY,
+        Action: Action,
+        Side: Side,
+        Lives: Lives,
+        PwrUP: PwrUP,
+        isBigger: isBigger,
+        isRunning: isRunning,
+        isTchnGround: isTchnGround
+    }
+    //temp_character = cloneObject(character)
+    //temp_character.Element = character.Element
+    return characters[name]
 }
 function set_animation_jump_on() {
     temp_character.Element.style.transition = '.2s ease bottom';  
@@ -106,11 +113,15 @@ function set_animation_jump_off() {
         set_character_blocks_under(5)
     }
 }
-function set_character_blocks_above(blocks) {
-    temp_character.Element.style.bottom = String(temp_character.PositionY + "rem")
-    let numb = parseInt(temp_character.Element.style.bottom.split('rem')[0]) + (blocks * 2)
-    temp_character.Element.style.bottom = String(numb + "rem") 
-    temp_character.PositionY = numb
+function set_character_blocks_Y(character_element, blocks) {
+    let numb = blocks * 2
+    character_element.DivElement.style.bottom = String(numb + "rem") 
+    character_element.PositionY = numb
+}
+function set_character_blocks_X(character_element, blocks) {
+    let numb = blocks * 2
+    character_element.DivElement.style.left = String(numb + "rem") 
+    character_element.PositionX = numb
 }
 function set_character_blocks_under(blocks) {
     temp_character.Element.style.bottom = String(temp_character.PositionY + "rem")
@@ -167,26 +178,139 @@ function moveLeft() {
 }
 
 
-function set_character(game_character_name){
-    set_character_boxes(game_content_characters, game_character_name)
-    set_default_character_params(game_character_name, 0, 4, 'standing','left', 1, 0, false, false, true)
+function set_character(game_character_name, PositionX, PositionY){
+    let Id_Element = set_character_boxes(game_content_characters, game_character_name)
+    var character
+    if(game_characters.includes(game_character_name)){
+        character = set_default_character_params(Id_Element, game_character_name, document.querySelector('.game-player'), PositionX, PositionY, 'standing', 'left', 1, 0, false, false, true)
+    }else if (game_enemies.includes(game_character_name)) {
+        character = set_default_character_params(Id_Element, game_character_name, document.querySelector(String('.' + Id_Element)), PositionX, PositionY, 'walking', 'left', 1, 0, false, false, true)
+    }
+
+    set_character_blocks_Y(character, PositionY)
+    set_character_blocks_X(character, PositionX)
+    if(game_character_name == game_enemies[0]){
+        character.DivElement.querySelector(String('.' + game_character_name)).addEventListener('click', function(){
+            console.log(this)
+        });
+        set_goomba_Interval(character, 600)
+    }
+    get_all()
 }
+
+function set_goomba_Interval(character, seconds) {
+    let interval = setInterval(() => {
+        goomba_movement(character)
+    }, seconds);
+    
+    let IdInterval = {
+        id: character.IdElement,
+        interval: interval
+    }
+    game_Intervals.push(IdInterval);    
+}
+
+function goomba_movement(goomba) {
+    let li = goomba.DivElement.querySelector(String('.' + goomba.Character_name));
+    if (goomba.Side == 'left') {
+        li.classList.remove(String(goomba.Action + '-' + goomba.Side))
+        goomba.Side = 'right'
+    }else{
+        li.classList.remove(String(goomba.Action + '-' + goomba.Side))
+        goomba.Side = 'left'
+    }
+    li.classList.add(String(goomba.Action + '-' + goomba.Side))
+}
+
 function set_character_boxes(base_element, game_character_name) {
+    let id
     let player = document.createElement('div')
     base_element.appendChild(player);
-    player.classList.add('game-player')
+    if(game_characters.includes(game_character_name)){
+        player.classList.add('game-player')
+        id = String('game-player-' + document.querySelectorAll('.game-player').length)
+        player.classList.add(id)
+    }else if (game_enemies.includes(game_character_name)) {
+        player.classList.add('game-enemy')
+        id = String('game-enemy-' + document.querySelectorAll('.game-enemy').length)
+        player.classList.add(id)
+    }
     for (let i = 0; i < 3; i++) {
         let character_row = document.createElement('ul')
-            player.appendChild(character_row);
-            character_row.classList.add('game-line')
-            for (let j = 0; j < 3; j++) {
+        player.appendChild(character_row);
+        character_row.classList.add('game-line')
+        for (let j = 0; j < 3; j++) {
             let character_element = document.createElement('li');
             character_row.appendChild(character_element);
+            character_element.setAttribute('data-box', j)
             if (i == 1 && j == 1) {
-                character_element.classList.add("game-character_hurtbox", "game-character", game_character_name, "standing-right")
+                if(game_characters.includes(game_character_name)){
+                    character_element.classList.add("game-character-hurtbox", "game-character", game_character_name, "standing-right")
+                }else if (game_enemies.includes(game_character_name)) {
+                    if(game_character_name == game_enemies[0]){
+                        character_element.classList.add("game-character-hurtbox", "game-character", game_character_name, "walking-right")
+                    }
+                }
             }else{
                 character_element.classList.add("game-character-hitbox")
             }
         }
     }
+
+    return id
 }
+
+function goomba_death(goomba) {
+    let li = goomba.DivElement.querySelector(String('.' + goomba.Character_name));
+    let index = game_Intervals.findIndex((intervalObj) => intervalObj.id === goomba.IdElement);
+    if (index !== -1) {
+        clearInterval(game_Intervals[index].interval);
+        game_Intervals.splice(index, 1);
+        li.classList.remove(String(goomba.Action + '-' + goomba.Side))
+        goomba.Action = "death"
+        li.classList.add(String(goomba.Action))
+        console.log(`Intervalo para el personaje "${character.Character_name}" ha sido detenido.`);
+        // Usar setTimeout para imprimir el segundo mensaje después de 1 segundo (1000 milisegundos)
+        setTimeout(() => {
+            goomba.DivElement.remove()
+        }, 800);
+        // Llamar a setTimeout para ejecutar miFuncion después de 1 segundo (1000 milisegundos)
+        //setTimeout(
+            //, 2000);
+    } else {
+        console.log("No se encontró el intervalo para el personaje específico.");
+    }
+}
+// Función para verificar si un elemento está dentro del rango de los elementos con el atributo "data-box"
+function isElementInsideBox(element, box) {
+    const elementRect = element.getBoundingClientRect();
+    const boxRect = box.getBoundingClientRect();
+  
+    return (
+      elementRect.left >= boxRect.left &&
+      elementRect.right <= boxRect.right &&
+      elementRect.top >= boxRect.top &&
+      elementRect.bottom <= boxRect.bottom
+    );
+  }
+  
+  // Escuchar el evento scroll para verificar si cada elemento con el atributo "data-box" está dentro del rango
+  function get_all(){
+    document.querySelectorAll('.game-enemy').forEach((gameEnemy) => {
+      let elementsWithBoxAttribute = gameEnemy.querySelectorAll('[data-box]');
+  
+      elementsWithBoxAttribute.forEach((element) => {
+        let boxNumber = parseInt(element.dataset.box);
+        let gameLine = element.closest('.game-line');
+  
+        if (isElementInsideBox(element, gameEnemy)) {
+          // Si el elemento está dentro del rango, agregar el color verde de fondo al LI correspondiente
+          gameLine.children[boxNumber].style.backgroundColor = 'green';
+        } else {
+          // Si el elemento no está dentro del rango, quitar el color verde de fondo al LI correspondiente
+          gameLine.children[boxNumber].style.backgroundColor = '';
+        }
+      });
+    });
+  };
+  

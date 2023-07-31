@@ -5,6 +5,7 @@ generate_level_one()
 
 function generate_level_one() {
     empty(game_content_rows);
+
     for (let index = 0; index < 15; index++) {
         let ul = document.createElement('ul');
         game_content_rows.appendChild(ul);
@@ -242,6 +243,7 @@ function generate_level_one() {
     }
 
     let question_blocks_animated = game_content_rows.querySelectorAll('.question-mark-animated') ?? [];
+
     if(question_blocks_animated.length > 0){
         question_blocks_animated.forEach((question_block) => {
             // Llamamos a la función changeClass cada segundo (1000 milisegundos)
@@ -249,8 +251,11 @@ function generate_level_one() {
                 question_block_changeClass(question_block)
               }, 170); // Cambia de clase cada 1 segundo (1000 milisegundos)
         });
-    }    
-    set_character('mario')
+    }
+
+    set_character('mario', 1, 1)
+    set_character('goomba', 30, 1)
+    set_character('goomba', 32, 1)
 }
 
 function question_block_changeClass(element) {

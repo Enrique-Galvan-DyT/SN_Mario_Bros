@@ -2,6 +2,11 @@ const game_content = document.querySelector(".game-content");
 const game_content_rows = game_content.querySelector(".game-rows");
 const game_content_characters = game_content.querySelector(".game-characters");
 
+let game_Intervals = [];
+
+const game_characters = ['mario', 'luigi']
+const game_enemies = ['goomba', 'koopa']
+
 const gameEntities = document.querySelectorAll('.game-entity');
 
 // Función para clonar el objeto original al objeto temporal
@@ -37,7 +42,7 @@ function declare_new_stats_to_character() {
 }
 
 // Utilizamos setInterval para llamar a la función cada 1000 milisegundos (1 segundo)
-setInterval(checkStats, 100);
+//setInterval(checkStats, 100);
 
 function checkIfInside(entity) {
     let characterRect = character.Element.getBoundingClientRect();
