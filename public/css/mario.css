@@ -2,28 +2,32 @@
 .mario{
     background-image: url('./../media/mario_bros_/smb_mario_sheet.png');
     background-repeat: no-repeat;
-}
-.standing-left{
+}.mario.standing-left{
     background-position: 46% 0%;
-}
-.standing-right{
+}.mario.standing-right{
     background-position: 54% 0%;
-}
-.jumping-left{
+}.mario.jumping-left{
     background-position: 7.4% 0%;
-}
-.jumping-right{
+}.mario.jumping-right{
     background-position: 92.4% 0%;
-}
-.running-start-left{
+}.mario.running-start-left{
     background-position: 38.4% 0%;
-}
-.running-end-left{
+}.mario.running-end-left{
     background-position: 22.9% 0%;
-}
-.running-start-right{
+}.mario.running-start-right{
     background-position: 61.7% 0%;
-}
-.running-end-right{
+}.mario.running-end-right{
     background-position: 77% 0%;
+}
+
+.goomba{
+    background-image: url('./../media/enemies_/enemies.png');
+    background-repeat: no-repeat;
+    background-size: 48rem;
+}.goomba.walking-left{
+    background-position: -0.6% 1%;
+}.goomba.walking-right{
+    background-position: 6.6% 1%;
+}.goomba.death{
+    background-position: 14% -1%;
 }
