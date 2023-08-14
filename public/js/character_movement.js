@@ -190,12 +190,15 @@ function set_character(game_character_name, PositionX, PositionY){
     set_character_blocks_Y(character, PositionY)
     set_character_blocks_X(character, PositionX)
     if(game_character_name == game_enemies[0]){
+        character.DivElement.children[1].children[1].classList.add('foot-left')
         character.DivElement.querySelector(String('.' + game_character_name)).addEventListener('click', function(){
             console.log(this)
         });
         set_goomba_Interval(character, 600)
     }
-    get_all()
+    setInterval(() => {
+        check_all_boxes()
+    }, 100);
 }
 
 function set_goomba_Interval(character, seconds) {
@@ -212,14 +215,31 @@ function set_goomba_Interval(character, seconds) {
 
 function goomba_movement(goomba) {
     let li = goomba.DivElement.querySelector(String('.' + goomba.Character_name));
-    if (goomba.Side == 'left') {
-        li.classList.remove(String(goomba.Action + '-' + goomba.Side))
-        goomba.Side = 'right'
+    if (li.classList[4] == 'foot-left') {
+        li.classList.remove(String('foot-left'))
+        li.classList.add(String('foot-right'))
     }else{
-        li.classList.remove(String(goomba.Action + '-' + goomba.Side))
-        goomba.Side = 'left'
+        li.classList.remove(String('foot-right'))
+        li.classList.add(String('foot-left'))
     }
-    li.classList.add(String(goomba.Action + '-' + goomba.Side))
+    
+    // Obtener la posición actual del div
+    let currentPosition = parseFloat(goomba.DivElement.style.left) || 0;
+    goomba.DivElement.style.transition = '.2s linear left';  
+
+    if (goomba.Side == 'left') {
+        // Mover el div un píxel a la derecha
+        currentPosition = currentPosition - 1;
+        // Establecer la nueva posición del div
+        goomba.DivElement.style.left = currentPosition + 'rem';
+        goomba.PositionX = currentPosition;
+    }else {
+        // Mover el div un píxel a la derecha
+        currentPosition = currentPosition + 1;
+        // Establecer la nueva posición del div
+        goomba.DivElement.style.left = currentPosition + 'rem';
+        goomba.PositionX = currentPosition;
+    }
 }
 
 function set_character_boxes(base_element, game_character_name) {
@@ -283,34 +303,57 @@ function goomba_death(goomba) {
 }
 // Función para verificar si un elemento está dentro del rango de los elementos con el atributo "data-box"
 function isElementInsideBox(element, box) {
-    const elementRect = element.getBoundingClientRect();
-    const boxRect = box.getBoundingClientRect();
-  
-    return (
-      elementRect.left >= boxRect.left &&
-      elementRect.right <= boxRect.right &&
-      elementRect.top >= boxRect.top &&
-      elementRect.bottom <= boxRect.bottom
-    );
-  }
-  
-  // Escuchar el evento scroll para verificar si cada elemento con el atributo "data-box" está dentro del rango
-  function get_all(){
-    document.querySelectorAll('.game-enemy').forEach((gameEnemy) => {
-      let elementsWithBoxAttribute = gameEnemy.querySelectorAll('[data-box]');
-  
-      elementsWithBoxAttribute.forEach((element) => {
-        let boxNumber = parseInt(element.dataset.box);
-        let gameLine = element.closest('.game-line');
-  
-        if (isElementInsideBox(element, gameEnemy)) {
-          // Si el elemento está dentro del rango, agregar el color verde de fondo al LI correspondiente
-          gameLine.children[boxNumber].style.backgroundColor = 'green';
-        } else {
-          // Si el elemento no está dentro del rango, quitar el color verde de fondo al LI correspondiente
-          gameLine.children[boxNumber].style.backgroundColor = '';
-        }
-      });
+    let boxRect = box.getBoundingClientRect();
+    let elementWithClass = Array.from(element).find(e => {
+        let elementRect = e.getBoundingClientRect();
+        return (
+            elementRect.left >= boxRect.left &&
+            elementRect.right <= boxRect.right &&
+            elementRect.top >= boxRect.top &&
+            elementRect.bottom <= boxRect.bottom
+        );
     });
-  };
-  
+
+    if (elementWithClass) {
+        return elementWithClass.classList[1];
+    } else {
+        return null;
+    }
+}
+function check_all_boxes() {
+    document.querySelectorAll('.game-enemy').forEach((gameEnemy) => {
+        let elementsWithBoxAttribute = gameEnemy.querySelectorAll('.game-character-hitbox');
+        
+        let chtr = characters[String(gameEnemy.children[1].children[1].classList[2] + "-" + gameEnemy.classList[1])];
+        let uls = Array.from(game_content_rows.children).slice((game_content_rows.childElementCount - 2) - chtr.PositionY, (game_content_rows.childElementCount + 1) - chtr.PositionY)
+        let gameEntity = [];
+        for (let index = 0; index < uls.length; index++) {
+            let selected_li = Array.from(uls[index].children).slice((chtr.PositionX / 2) - 1, (chtr.PositionX / 2) + 4)
+            selected_li.forEach(li => {
+                gameEntity.push(...li.children);
+                
+            });
+        }
+
+        for (let index = 0; index < elementsWithBoxAttribute.length; index++) {
+            let element = elementsWithBoxAttribute[index]
+            let secondClass = isElementInsideBox(gameEntity, element);
+            if(chtr.Character_name == 'goomba'){
+                if (secondClass != undefined && secondClass.includes('pipe')) {
+                    if (index == 3) {
+                        chtr.Side = 'right'
+                        console.log(chtr.Side)
+                    }else if (index == 4){
+                        chtr.Side = 'left'
+                        console.log(chtr.Side)
+                    }
+                    // Si el elemento está dentro del rango, agregar el color verde de fondo al LI correspondiente
+                    element.style.backgroundColor = 'green';
+                } else {
+                    // Si el elemento no está dentro del rango, quitar el color verde de fondo al LI correspondiente
+                    element.style.backgroundColor = '';
+                }
+            }
+        }
+    });
+}
