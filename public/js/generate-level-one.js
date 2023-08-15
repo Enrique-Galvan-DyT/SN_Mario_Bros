@@ -254,8 +254,22 @@ function generate_level_one() {
     }
 
     set_character('mario', 1, 1)
-    set_character('goomba', 30, 1)
-    set_character('goomba', 32, 1)
+    set_character('goomba', 41, 1)
+    set_character('goomba', 23, 1)
+    set_character('goomba', 52, 1)
+    set_character('goomba', 53, 1)
+    set_character('goomba', 81, 9)
+    set_character('goomba', 83, 9)
+    set_character('goomba', 98, 1)
+    set_character('goomba', 99, 1)
+    set_character('goomba', 115, 1)
+    set_character('goomba', 116, 1)
+    set_character('goomba', 125, 1)
+    set_character('goomba', 126, 1)
+    set_character('goomba', 129, 1)
+    set_character('goomba', 130, 1)
+    set_character('goomba', 175, 1)
+    set_character('goomba', 176, 1)
 }
 
 function question_block_changeClass(element) {

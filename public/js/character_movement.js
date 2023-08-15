@@ -193,24 +193,36 @@ function set_character(game_character_name, PositionX, PositionY){
         character.DivElement.children[1].children[1].classList.add('foot-left')
         character.DivElement.querySelector(String('.' + game_character_name)).addEventListener('click', function(){
             console.log(this)
+            goomba_death(characters[String(this.classList[2] + "-" + this.closest('div').classList[1])])
         });
-        set_goomba_Interval(character, 600)
+        set_goomba_Interval(character, 300)
     }
+    /*
     setInterval(() => {
         check_all_boxes()
     }, 100);
+    */
 }
 
 function set_goomba_Interval(character, seconds) {
-    let interval = setInterval(() => {
-        goomba_movement(character)
-    }, seconds);
+    character.DivElement.style.transition = String('.' + (seconds - 30) + 's linear left, .' + ((seconds / 2)) + 's linear bottom');  
+    let interval = []
     
+    interval.push(setInterval(() => {
+        goomba_movement(character)
+    }, seconds))
+    
+    interval.push(setInterval(() => {
+        check_all_boxes(character) 
+        goomba_fall(character)
+    }, seconds / 2))
+
     let IdInterval = {
         id: character.IdElement,
         interval: interval
     }
-    game_Intervals.push(IdInterval);    
+    
+    game_Intervals.push(IdInterval);   
 }
 
 function goomba_movement(goomba) {
@@ -222,25 +234,47 @@ function goomba_movement(goomba) {
         li.classList.remove(String('foot-right'))
         li.classList.add(String('foot-left'))
     }
-    
-    // Obtener la posición actual del div
-    let currentPosition = parseFloat(goomba.DivElement.style.left) || 0;
-    goomba.DivElement.style.transition = '.2s linear left';  
 
+    // Obtener la posición actual del div
+    let currentPositionX = parseFloat(goomba.DivElement.style.left) || 0;
+    let currentPositionY = parseFloat(goomba.DivElement.style.bottom) || 0;
+    
     if (goomba.Side == 'left') {
         // Mover el div un píxel a la derecha
-        currentPosition = currentPosition - 1;
+        currentPositionX = currentPositionX - 1;
         // Establecer la nueva posición del div
-        goomba.DivElement.style.left = currentPosition + 'rem';
-        goomba.PositionX = currentPosition;
+        goomba.DivElement.style.left = currentPositionX + 'rem';
+        goomba.PositionX = currentPositionX;
     }else {
         // Mover el div un píxel a la derecha
-        currentPosition = currentPosition + 1;
+        currentPositionX = currentPositionX + 1;
         // Establecer la nueva posición del div
-        goomba.DivElement.style.left = currentPosition + 'rem';
-        goomba.PositionX = currentPosition;
+        goomba.DivElement.style.left = currentPositionX + 'rem';
+        goomba.PositionX = currentPositionX;
+    }
+    
+    if (currentPositionX < -4 || currentPositionY < -4) {
+        goomba_death(characters[String(goomba.Character_name + "-" + goomba.IdElement)])
     }
 }
+
+function goomba_fall(goomba) {
+    // Obtener la posición actual del div
+    let currentPositionY = parseFloat(goomba.DivElement.style.bottom) || 0;
+    
+    if (!goomba.isTchnGround) {
+        //console.log('cayendo')
+        currentPositionY = currentPositionY - 1;
+        // Establecer la nueva posición del div
+        goomba.DivElement.style.bottom = currentPositionY + 'rem';
+        goomba.PositionY = currentPositionY;
+    }
+    
+    if (currentPositionY < -4) {
+        goomba_death(characters[String(goomba.Character_name + "-" + goomba.IdElement)])
+    }
+}
+
 
 function set_character_boxes(base_element, game_character_name) {
     let id
@@ -284,12 +318,13 @@ function goomba_death(goomba) {
     let li = goomba.DivElement.querySelector(String('.' + goomba.Character_name));
     let index = game_Intervals.findIndex((intervalObj) => intervalObj.id === goomba.IdElement);
     if (index !== -1) {
-        clearInterval(game_Intervals[index].interval);
+        clearInterval(game_Intervals[index].interval[0]);
+        clearInterval(game_Intervals[index].interval[1]);
         game_Intervals.splice(index, 1);
         li.classList.remove(String(goomba.Action + '-' + goomba.Side))
         goomba.Action = "death"
         li.classList.add(String(goomba.Action))
-        console.log(`Intervalo para el personaje "${character.Character_name}" ha sido detenido.`);
+        console.log(`Intervalo para el personaje "${goomba.Character_name}" ha sido detenido.`);
         // Usar setTimeout para imprimir el segundo mensaje después de 1 segundo (1000 milisegundos)
         setTimeout(() => {
             goomba.DivElement.remove()
@@ -308,9 +343,9 @@ function isElementInsideBox(element, box) {
         let elementRect = e.getBoundingClientRect();
         return (
             elementRect.left >= boxRect.left &&
-            elementRect.right <= boxRect.right &&
-            elementRect.top >= boxRect.top &&
-            elementRect.bottom <= boxRect.bottom
+                elementRect.right <= boxRect.right &&
+                elementRect.top >= boxRect.top &&
+                elementRect.bottom <= boxRect.bottom
         );
     });
 
@@ -320,12 +355,9 @@ function isElementInsideBox(element, box) {
         return null;
     }
 }
-function check_all_boxes() {
-    document.querySelectorAll('.game-enemy').forEach((gameEnemy) => {
-        let elementsWithBoxAttribute = gameEnemy.querySelectorAll('.game-character-hitbox');
-        
-        let chtr = characters[String(gameEnemy.children[1].children[1].classList[2] + "-" + gameEnemy.classList[1])];
-        let uls = Array.from(game_content_rows.children).slice((game_content_rows.childElementCount - 2) - chtr.PositionY, (game_content_rows.childElementCount + 1) - chtr.PositionY)
+function check_all_boxes(chtr) {
+    let elementsWithBoxAttribute = chtr.DivElement.querySelectorAll('.game-character-hitbox');
+        let uls = Array.from(game_content_rows.children).slice((game_content_rows.childElementCount - 3) - (chtr.PositionY / 2), game_content_rows.childElementCount - (chtr.PositionY / 2))
         let gameEntity = [];
         for (let index = 0; index < uls.length; index++) {
             let selected_li = Array.from(uls[index].children).slice((chtr.PositionX / 2) - 1, (chtr.PositionX / 2) + 4)
@@ -339,21 +371,46 @@ function check_all_boxes() {
             let element = elementsWithBoxAttribute[index]
             let secondClass = isElementInsideBox(gameEntity, element);
             if(chtr.Character_name == 'goomba'){
-                if (secondClass != undefined && secondClass.includes('pipe')) {
+                if (secondClass != undefined && (secondClass.includes('pipe') || secondClass.includes('solid'))) {
                     if (index == 3) {
                         chtr.Side = 'right'
                         console.log(chtr.Side)
+                        // Si el elemento está dentro del rango, agregar el color verde de fondo al LI correspondiente
+                        element.style.backgroundColor = 'green';
                     }else if (index == 4){
                         chtr.Side = 'left'
                         console.log(chtr.Side)
+                        // Si el elemento está dentro del rango, agregar el color verde de fondo al LI correspondiente
+                        element.style.backgroundColor = 'green';
                     }
-                    // Si el elemento está dentro del rango, agregar el color verde de fondo al LI correspondiente
-                    element.style.backgroundColor = 'green';
                 } else {
                     // Si el elemento no está dentro del rango, quitar el color verde de fondo al LI correspondiente
                     element.style.backgroundColor = '';
                 }
+
+                if (secondClass != undefined && secondClass.includes('sky')) {
+                    if (index == 6) {
+                        // Si el elemento está dentro del rango, agregar el color verde de fondo al LI correspondiente
+                        element.style.backgroundColor = 'orange';
+                        chtr.isTchnGround = false
+                    }
+
+                }else{
+                    // Si el elemento está dentro del rango, agregar el color verde de fondo al LI correspondiente
+                    element.style.backgroundColor = '';
+                }
+
+                if (secondClass != undefined && (secondClass.includes('brick') || secondClass.includes('normal'))) {
+                    if (index == 6) {
+                        // Si el elemento está dentro del rango, agregar el color verde de fondo al LI correspondiente
+                        element.style.backgroundColor = 'red';
+                        chtr.isTchnGround = true
+                    }
+
+                }else{
+                    // Si el elemento está dentro del rango, agregar el color verde de fondo al LI correspondiente
+                    element.style.backgroundColor = '';
+                }
             }
         }
-    });
 }
