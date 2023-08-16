@@ -270,6 +270,8 @@ function generate_level_one() {
     set_character('goomba', 130, 1)
     set_character('goomba', 175, 1)
     set_character('goomba', 176, 1)
+
+    declare_controls();
 }
 
 function question_block_changeClass(element) {
