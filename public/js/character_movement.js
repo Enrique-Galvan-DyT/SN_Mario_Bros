@@ -2,6 +2,8 @@ const controlKeys = ['w', 'a', 's', 'd'];
 let moveInterval;
 let isKeyPressed = false;
 
+var keysPressed = new Map;
+
 let characters = {}
 
 let character = {
@@ -88,36 +90,59 @@ const game_players = game_content_characters.querySelectorAll('.game-player')
 
     game_players.forEach(player => {
         document.addEventListener('keydown', function(event) {
-            let key = event.key.toLowerCase();
-            chtr = characters[String(player.querySelector('.game-character').classList[2] + '-' + player.classList[1])]
+            keysPressed.set(event.code);
             
-            if (key == controlKeys[0]) {
-                // Se presionó la tecla W
-                //console.log('Tecla W presionada');
-                if (chtr.Action != 'jumping') {
-                    jump(chtr)
-                }
-            } else if (key == controlKeys[1]) {
-                // Se presionó la tecla A
-                chtr.Side = 'left';
-                moveLeft(chtr);
-                //console.log('Tecla A presionada');
-            } else if (key == controlKeys[2]) {
-                // Se presionó la tecla S
-                if (chtr.Action == 'jumping') {
-                    fall_off(chtr)
-                }
-                console.log('Tecla S presionada');
-            } else if (key == controlKeys[3]) {
-                // Se presionó la tecla D
-                chtr.Side = 'right';
-                moveRight(chtr)
-                //console.log('Tecla D presionada');
-            }
+            let key = event.key.toLowerCase();
+
+            chtr = characters[String(player.querySelector('.game-character').classList[2] + '-' + player.classList[1])]
+        });
+        document.addEventListener('keyup', function (event) {
+            keysPressed.delete(event.code);
         });
     });
 }
 
+function buclePrincipal(){
+    var teclas="";
+    keysPressed.forEach((value, key)=>{teclas+=key+" ";});
+    if (keysPressed.has("KeyD")){
+        chtr.Side = 'right';
+        moveRight(chtr)
+    } else if (keysPressed.has("KeyA")){
+        chtr.Side = 'left';
+        moveLeft(chtr)
+    }
+
+    if (keysPressed.has("KeyD") && keysPressed.has("KeyW")){
+        chtr.Side = 'right';
+        if (chtr.Action != 'jumping') {
+            jump(chtr)
+        }
+        moveRight(chtr)
+    } else if (keysPressed.has("KeyA") && keysPressed.has("KeyW")) {
+        chtr.Side = 'left';
+        if (chtr.Action != 'jumping') {
+            jump(chtr)
+        }
+        moveLeft(chtr)
+    }
+
+    if (keysPressed.has("KeyW")) {
+        if (chtr.Action != 'jumping') {
+            jump(chtr)
+        }
+    }else if (keysPressed.has("KeyS")) {
+        if (chtr.Action == 'jumping') {
+            fall_off(chtr)
+        }
+    }else if (keysPressed.has("KeyW") && keysPressed.has("KeyS")) {
+        if (chtr.Action != 'jumping') {
+            jump(chtr)
+        }
+    }
+    requestAnimationFrame(buclePrincipal);
+}
+requestAnimationFrame(buclePrincipal);
 
 
 function set_default_character_params(Id_Element, Character_name, DivElement, PositionX, PositionY, Action, Side, Lives, PwrUP, isBigger, isRunning, isTchnGround) {
@@ -198,6 +223,7 @@ function moveRight(chtr) {
         }
     }
     */
+    check_all_boxes(chtr)
     if (chtr.Side == "right") {
         chtr.DivElement.querySelector(String('.' + chtr.Character_name)).classList.remove(String(chtr.Action + '-left'))
         chtr.DivElement.querySelector(String('.' + chtr.Character_name)).classList.add(String(chtr.Action + '-' + chtr.Side))
@@ -228,6 +254,7 @@ function moveLeft(chtr) {
         }
     }
     */
+    check_all_boxes(chtr)
     if (chtr.Side == "left") {
         chtr.DivElement.querySelector(String('.' + chtr.Character_name)).classList.remove(String(chtr.Action + '-right'))
         chtr.DivElement.querySelector(String('.' + chtr.Character_name)).classList.add(String(chtr.Action + '-' + chtr.Side))
@@ -440,68 +467,102 @@ function isElementInsideBox(element, box) {
         return null;
     }
 }
+function isElementUnderBox(element, box) {
+    let elementRect = element.getBoundingClientRect();    
+    let boxRect = box.getBoundingClientRect();
+    if(
+        (elementRect.left >= boxRect.left &&
+            elementRect.bottom <= boxRect.bottom)
+        ||
+        (elementRect.right <= boxRect.right &&
+            elementRect.bottom <= boxRect.bottom)
+    ){
+        return box.classList[1];
+    } else {
+        return null;
+    }
+}
 function check_all_boxes(chtr) {
-    let elementWithHurtBox = chtr.DivElement.querySelector('.game-character-hurtbox');
-        let uls = Array.from(game_content_rows.children).slice((game_content_rows.childElementCount - 3) - (chtr.PositionY / 2), game_content_rows.childElementCount - (chtr.PositionY / 2))
-        let gameEntity = [];
-        for (let index = 0; index < uls.length; index++) {
-            let selected_li = Array.from(uls[index].children).slice((chtr.PositionX / 2) - 1, (chtr.PositionX / 2) + 4)
-            selected_li.forEach(li => {
-                gameEntity.push(...li.children);
-                
-            });
-        }
-        //goomba
-        if (chtr.Character_name == game_enemies[0]) {
-            for (let index = 0; index < gameEntity.length; index++) {
-                let element = gameEntity[index].classList[1];
-                switch (index) {
-                    case 6:
-                        if (element.includes('pipe') || element.includes('solid')) {
-                            chtr.Side = 'right'
-                        }
-                        break;
-                    case 8:
-                        if (element.includes('pipe') || element.includes('solid')) {
-                            chtr.Side = 'left'
-                        }
-                        break;
-                    case 13:
-                        if (element.includes('normal') || element.includes('brick') || element.includes('question')) {
-                            chtr.isTchnGround = true
-                        }else if (element.includes('sky')) {
-                            chtr.isTchnGround = false
-                        }
-                        break;
-                }
+    
+    let uls = Array.from(game_content_rows.children).slice((game_content_rows.childElementCount - 3) - (chtr.PositionY / 2), game_content_rows.childElementCount - (chtr.PositionY / 2))
+    let gameEntity = [];
+    
+    for (let index = 0; index < uls.length; index++) {
+        let selected_li = Array.from(uls[index].children).slice((chtr.PositionX / 2) - 1, (chtr.PositionX / 2) + 4)
+        selected_li.forEach(li => {
+            gameEntity.push(...li.children);
+            
+        });
+    }
+    //goomba
+    if (chtr.Character_name == game_enemies[0]) {
+        for (let index = 0; index < gameEntity.length; index++) {
+            let element = gameEntity[index].classList[1];
+            switch (index) {
+                case 6:
+                    if (element.includes('pipe') || element.includes('solid')) {
+                        chtr.Side = 'right'
+                    }
+                    break;
+                case 8:
+                    if (element.includes('pipe') || element.includes('solid')) {
+                        chtr.Side = 'left'
+                    }
+                    break;
+                case 13:
+                    if (element.includes('normal') || element.includes('brick') || element.includes('question')) {
+                        chtr.isTchnGround = true
+                    }else if (element.includes('sky')) {
+                        chtr.isTchnGround = false
+                    }
+                    break;
             }
         }
+    }
         
-        if (chtr.Character_name == game_characters[0]) {
-        /*
-        console.log(gameEntity)
-        */
-            for (let index = 0; index < gameEntity.length; index++) {
-                let element = gameEntity[index].classList[1];
-                switch (index) {
-                    case 6:
-                        if (element.includes('pipe') || element.includes('solid')) {
-                            chtr.Side = 'right'
-                        }
-                    break;
-                    case 8:
-                        if (element.includes('pipe') || element.includes('solid')) {
-                            chtr.Side = 'left'
-                        }
-                    break;
-                    case 12:
-                        if (element.includes('normal') || element.includes('brick') || element.includes('question')) {
-                            chtr.isTchnGround = true
-                        }else if (element.includes('sky')) {
-                            chtr.isTchnGround = false
-                        }
-                    break;
-                }
+    if (chtr.Character_name == game_characters[0]) {
+        let elementUnderBox = chtr.DivElement.querySelector('ul:last-child > li:nth-child(2)');
+        
+        //let underClass = isElementUnderBox(elementUnderBox, gameEntity[12])
+        let aboveClass = String(gameEntity[2].classList[1] + ' ' + isElementUnderBox(elementUnderBox, gameEntity[3]))
+        let underClass = String(gameEntity[12].classList[1] + ' ' + isElementUnderBox(elementUnderBox, gameEntity[13]))
+        if (underClass != undefined) {
+            if (underClass.includes('normal') || underClass.includes('brick') || underClass.includes('question') || underClass.includes('pipe')) {
+                chtr.isTchnGround = true
+            } else if (chtr.DivElement.querySelector('.game-character').classList[3].includes('jumping') && underClass.includes('sky')) {
+                chtr.isTchnGround = false
+            } else if (!chtr.DivElement.querySelector('.game-character').classList[3].includes('jumping') && underClass.includes('sky')) {
+                chtr.isTchnGround = false
+                fall_off(chtr)
             }
+            
         }
+    }
+    /*
+    console.log(isElementUnderBox(elementWithHurtBox, gameEntity[12]));
+    console.log(gameEntity)
+    for (let index = 0; index < gameEntity.length; index++) {
+        let element = gameEntity[index].classList[1];
+        
+        switch (index) {
+            case 6:
+                if (element.includes('pipe') || element.includes('solid')) {
+                    chtr.Side = 'right'
+                }
+            break;
+            case 8:
+                if (element.includes('pipe') || element.includes('solid')) {
+                    chtr.Side = 'left'
+                }
+            break;
+            case 12:
+                if (element.includes('normal') || element.includes('brick') || element.includes('question')) {
+                    chtr.isTchnGround = true
+                }else if (element.includes('sky')) {
+                    chtr.isTchnGround = false
+                }
+            break;
+        }
+    }
+    */
 }
