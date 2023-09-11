@@ -24,9 +24,9 @@
     background-image: url('./../media/enemies_/enemies.png');
     background-repeat: no-repeat;
     background-size: 48rem;
-}.goomba.walking-left{
+}.goomba.foot-left{
     background-position: -0.6% 1%;
-}.goomba.walking-right{
+}.goomba.foot-right{
     background-position: 6.6% 1%;
 }.goomba.death{
     background-position: 14% -1%;
