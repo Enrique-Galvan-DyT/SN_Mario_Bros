@@ -194,8 +194,11 @@ function set_character(game_character_name, PositionX, PositionY){
             console.log(this)
         });
         set_goomba_Interval(character, 600)
-    }
-    get_all()
+    }  
+    // Llama a la función miFuncion cada 1000 milisegundos (1 segundo)
+    setInterval(()=>{
+        get_all()
+    }, 100);
 }
 
 function set_goomba_Interval(character, seconds) {
@@ -283,8 +286,8 @@ function goomba_death(goomba) {
 }
 // Función para verificar si un elemento está dentro del rango de los elementos con el atributo "data-box"
 function isElementInsideBox(element, box) {
-    const elementRect = element.getBoundingClientRect();
-    const boxRect = box.getBoundingClientRect();
+    let elementRect = element.getBoundingClientRect();
+    let boxRect = box.getBoundingClientRect();
   
     return (
       elementRect.left >= boxRect.left &&
@@ -313,4 +316,3 @@ function isElementInsideBox(element, box) {
       });
     });
   };
-  
